@@ -6,8 +6,8 @@
  *  by
  *  Kate Hartman / Nick Puckett
  */
-
-
+#include <Brain.h>                                           // Set up the brain parser, pass it the hardware serial object you want to listen on.
+Brain brain(Serial);
 
 long lastSend;                                               //used for the timer controlling the send rate
 int sendDelay = 20;                                         //ms between data sends. required for proper functionality
