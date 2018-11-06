@@ -12,10 +12,16 @@ with inspiration from the incomparable Coding Train
 var serial;       //variable to hold the serial port object
 var ardVal = [];  //array that will hold all values coming from arduino
 //var dt = new Date('May 13, 1988 00:00:00');
-var lastRead;   //= dt.getTime();
-var refreshRate = 10;
+//var lastRead;   //= dt.getTime();
+//var refreshRate = 60;
 
-var ran = false;
+//var kay;
+var pea;
+var jay;
+var ell;
+var emm;
+
+//var ran = false;
 var serialPortName = 'COM4';        //FOR PC it will be COMX on mac it will be something like "/dev/cu.usbmodemXXXX"
                                     //Look at P5 Serial to see the available ports
 function setup() {
@@ -27,35 +33,43 @@ function setup() {
   serial.on('open',ardCon);           //open the socket connection and execute the ardCon callback
   serial.on('data',dataReceived);     //when data is received execute the dataReceived function
 
-  lastRead = frameCount;
-}
+}    
+//  lastRead = frameCount;
 
 function draw() 
 {    
-    var k=ardVal[0];                   //draws a shape based on the rhodeona curve
-    var j=ardVal[1];                    //using external arduino inputs
-    background(51);                     //TODO: background colour adjusted on the fly by an input
+    //kay=ardVal[0];  //potentiometer
+    pea=ardVal[1];  //light dependent resistor                      
+    jay=ardVal[2];  //x orientation
+    ell=ardVal[3];  //y orientation
+    emm=ardVal[4];  //z orientation
+    if (pea>=0){
+        background(pea); //background is darker/lighter based on the light sensor
+    }else{                  //if the light sensor can't be read return a light grey
+    background(51);
+        }
     translate(width/2,height/2)
     noFill();
     
-    if (frameCount-lastRead>=refreshRate)// && (ran==false) //(millis()-lastRead>=sampleRate)
-    {
-    beginShape();
+ //   if (frameCount-lastRead>=refreshRate)// && (ran==false) //(millis()-lastRead>=sampleRate)
+    beginShape();           //draws a shape based on the rhodeona curve
     for (var a = 0; a < TWO_PI*8; a += 0.01) {
-        var r = 200 * cos(k*a); 
-        var x = r * (cos(a)*j);
-        var y = r * (sin(a)*j);
-        stroke(135,206,250);                    //TODO: stroke colour adjusted on the fly by an input
+        var r = 200 * cos(jay*a); 
+        var x = r * (cos(a))*(ell/4);
+        var y = r * (sin(a))*(emm/4);
+        
+        if ((jay>=0)&&(ell>=0)&&(emm>=0)){
+        stroke(jay,ell,emm);    
+            }else{
+                stroke(255);
+            }
         strokeWeight(1);
         vertex(x,y);
-        lastRead = frameCount;
         }
     endShape();
- //   ran = true;
-        }
 
     
-console.log(frameCount-lastRead>=refreshRate);
+        console.log(ardVal[0], ardVal[1], ardVal[2], ardVal[3], ardVal[4]);
 }
 
 
@@ -85,3 +99,9 @@ function windowResized()
 {
     resizeCanvas(windowWidth, windowHeight);
 }
+
+/*function strokeColour()
+{
+    
+}
+*/
