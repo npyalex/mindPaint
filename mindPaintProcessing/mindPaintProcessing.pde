@@ -1,8 +1,8 @@
-import processing.sound.*;
+import processing.sound.*;  //for adding sound playback
 import controlP5.*;
 import processing.serial.*;
+
 Serial myPort;
- 
  
 int payloadLength = 0;
  
@@ -16,22 +16,33 @@ int LoGamma;
 int MidGamma;
 int Attn;
 int Med;
-int LineCounter;
+
+int timer; 
+
+PFont font;
  
 String reportString;
- 
+String waitingForData = "Low Reception. Please Be Patient.";
+String noSignal = "Waiting for Brain Data.";
+String filename = "mindPainter####.jpg";
+
+boolean screenShotHasRun = false;
+
 void setup(){
   //fullScreen();
-  size(1060,720);
+  font = createFont("Proxima Nova", 16, true);  //Proxima Nova is the best font ¯\_(-_-)_/¯
+  textFont(font);
+  size(1060,730);
   background(0);
   printArray(Serial.list());
   frameRate(2000); 
-  myPort = new Serial(this, Serial.list()[0],57600); //[0]=COM8
-//  LineCounter = 0;
+  myPort = new Serial(this, Serial.list()[0],57600); //[0]=COM6
 }
  
 void draw(){
- 
+   screenShot();
+   consoleMessages();    
+
    if(myPort.read() == 170){
     if(myPort.read() == 170){
  
@@ -46,9 +57,9 @@ void draw(){
             inBuffer = myPort.readBytes();
             myPort.readBytes(inBuffer);
             if (inBuffer != null) {
- 
-              Delta = int(inBuffer[5]);      //deep sleep
-              Theta = int(inBuffer[8]);      //meditation & sleep
+               
+              Delta = int(inBuffer[5]);      //deep sleep 
+              Theta = int(inBuffer[8]);      //meditation & sleep 
               LoAlpha = int(inBuffer[11]);    //imagination
               HiAlpha = int(inBuffer[14]);    //intuition
               LoBeta = int(inBuffer[17]);    //alertness
@@ -57,20 +68,46 @@ void draw(){
               MidGamma = int(inBuffer[26]);    //insight
               Attn = int(inBuffer[29]);      //attention 
               Med = int(inBuffer[31]);      //meditation
- 
-            }
-        }
-        background(LoBeta);
+/*              
+      print("Delta"+" "+ Delta+", ");
+      print("Theta"+" "+ Theta+", ");
+      println("LoAlpha"+" "+ LoAlpha+", ");
+      print("HiAlpha"+" "+ HiAlpha+", ");
+      print("LoBeta"+" "+ LoBeta+", ");
+      println("HiBeta"+" "+ HiBeta+", ");
+      print("LoGamma"+" "+ LoGamma+", ");
+      print("MidGamma"+" "+ MidGamma+", ");
+      println("Attn"+" "+ Attn+", ");
+      println("Med"+" "+ Med);
+*/
+                  
+               
+          }//closes the if data received statement
+        }//closes while myport.available
+    //*******Draw functions must be in here to properly align with brain readings!**********   
+    drawShape();
+    //************************************************************************************
+      }//closes if bytepayload==32
+    }//closes if myport reads 170 
+  }
+
+}
+
+void drawShape(){ //draw a shape based on the rhodeona curve using the mind readings as variables
+   if(millis()-timer>=2000){ //redraw the screen with what is read every 2 secs
+        background(Med); //background should get brighter the higher the user's attention(using Attn)
         translate(width/2,height/2);
-        fill(HiAlpha,LoBeta,MidGamma);
-        beginShape();           //draw a shape based on the rhodeona curve using the mind readings as variables
-        for (float a = 0; a < TWO_PI*8; a += 0.01) {
-          float r = 200 * cos(Delta*a); 
-          float x = r * (cos(a))*(Theta/4);
-          float y = r * (sin(a))*(LoAlpha/4);
+        fill(HiAlpha,LoBeta,MidGamma); //(HiAlpha,LoBeta,MidGamma)
+        beginShape();           
+        for (float a = 0; a < TWO_PI*8; a += 0.01) { //shape should get more complex the higher the user's meditation
+ //the multiplier of TWO_PI(8 as of writing) should be a single integer, not a variable
+ //the number that the cosine is multiplied by (200 as of writing) should be a single integer, not a variable
+          float r = (200) * cos(Attn*a);  //base for generating vertex points - using Med*a
+          float x = r * (cos(a))*(Theta*HiAlpha); //vertex points - using Theta/2 
+          float y = r * (sin(a))*(LoAlpha*HiBeta); //vertex points - using LoAlpha/2
         
-        if ((Attn>=0)&&(LoGamma>=0)&&(MidGamma>=0)){
-          stroke(Attn,LoGamma,MidGamma);    
+        if ((LoAlpha>=0)&&(LoGamma>=0)&&(MidGamma>=0)){
+          stroke(LoAlpha,LoGamma,HiBeta);    //(LoAlpha,LoGamma,HiBeta)
             }else{
           stroke(255);
             }
@@ -78,49 +115,38 @@ void draw(){
         vertex(x,y);
         }
         endShape();
- /*
-        noStroke();
-        fill(0);
-        rect(float(LineCounter),0,1,250);
- 
-        //Do Delta
-        fill(255,0,0);
-        rect(float(LineCounter),25 - (Delta / 10),1,Delta / 10);
- 
-        //Do Theta
-        rect(float(LineCounter),50 - (Theta / 10),1,Theta / 10);
- 
-        //Do Low Alpha
-        rect(float(LineCounter),75 - (LoAlpha / 10),1,LoAlpha / 10);
- 
-        //Do High Alpha
-        rect(float(LineCounter),100 - (HiAlpha / 10),1,HiAlpha / 10);
- 
-        //Do Low Beta
-        rect(float(LineCounter),125 - (LoBeta / 10),1,LoBeta / 10);
- 
-        //Do High Beta
-        rect(float(LineCounter),150 - (HiBeta / 10),1,HiBeta / 10);
- 
-        //Do Low Gamma
-        rect(float(LineCounter),175 - (LoGamma / 10),1,LoGamma / 10);
- 
-        //Do Mid Gamma
-        rect(float(LineCounter),200 - (MidGamma / 10),1,MidGamma / 10);
- 
-        //Do Attention
-        fill(0,255,0);
-        rect(float(LineCounter),225 - (Attn / 10),1,Attn / 10);
- 
-        //Do Meditation
-        fill(255,255,0);
-        rect(float(LineCounter),250 - (Med / 10),1,Med / 10);
- 
-        LineCounter++;
-        if(LineCounter > 600){
-          LineCounter = 0;
- */       }
-      }
-    }
+        timer = millis();
+  }//closes the timer if-statement 
+} //closes the function
+
+void consoleMessages(){
+     if ((Delta<=1)||(Theta<=1)||(LoAlpha<=1)||(HiAlpha<=1)||(LoBeta<=1)||(HiBeta<=1)||(LoGamma<=1)||(MidGamma<=1)||(Attn<=1)||(Med<=1)){
+          fill(151);
+    //      translate(0,0);
+          textAlign(LEFT);
+          text(waitingForData, 0,30); //if any sensor is reporting low or no data, write some text
+        }
+   if((Delta<=0)&&(Theta<=0)&&(LoAlpha<=0)&&(HiAlpha<=0)&&(LoBeta<=0)&&(HiBeta<=0)&&(LoGamma<=0)&&(MidGamma<=0)&&(Attn<=0)&&(Med<=0))
+        {
+          fill(151);
+   //       translate(0,0);
+          textAlign(LEFT);
+          text(noSignal, 0,50); //if no sensors are returning data, write some text
+        }
+}// closes the function
+
+void screenShot(){
+  if (keyPressed){
+    if((key=='c')&&(screenShotHasRun==false)){
+      saveFrame(filename);
+      screenShotHasRun=true;
+      println("C Pressed");
    }
-//}
+  }
+}
+void keyReleased(){
+    if ((key=='c')&&(screenShotHasRun==true)){
+      screenShotHasRun=false;
+      println("C Released");
+    }
+}
