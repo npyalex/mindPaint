@@ -1,5 +1,5 @@
-import processing.sound.*;  //for adding sound playback
-import controlP5.*;
+import processing.sound.*;  //not used yet. for adding sound playback options later.
+import controlP5.*;         //to ease the transition from p5 to Processing
 import processing.serial.*;
 
 Serial myPort;
@@ -24,15 +24,15 @@ PFont font;
 String reportString;
 String waitingForData = "Low Reception. Please Be Patient.";
 String noSignal = "Waiting for Brain Data.";
-String filename = "mindPainter####.jpg";
+String filename = "mindPainter####.jpg"; //####=frameCount when the screenshots were taken
 
 boolean screenShotHasRun = false;
 
 void setup(){
-  //fullScreen();
+  //fullScreen(); //slows down the program 
   font = createFont("Proxima Nova", 16, true);  //Proxima Nova is the best font ¯\_(-_-)_/¯
   textFont(font);
-  size(1060,730);
+  size(1060,730); //comment this out if you want to run at fullscreen
   background(0);
   printArray(Serial.list());
   frameRate(2000); 
@@ -135,18 +135,18 @@ void consoleMessages(){
         }
 }// closes the function
 
-void screenShot(){
+void screenShot(){ //save the current frame to the sketch folder
   if (keyPressed){
     if((key=='c')&&(screenShotHasRun==false)){
       saveFrame(filename);
-      screenShotHasRun=true;
-      println("C Pressed");
+      screenShotHasRun=true; //prevent a held key from taking lots of screenshots
+      println("Screenshot saved!");
    }
   }
 }
 void keyReleased(){
     if ((key=='c')&&(screenShotHasRun==true)){
-      screenShotHasRun=false;
-      println("C Released");
+      screenShotHasRun=false; //allow screenShot to run again once the key is released
+//      println("C Released");
     }
 }
