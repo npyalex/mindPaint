@@ -26,7 +26,8 @@ String waitingForData = "Low Reception. Please Be Patient.";
 String noSignal = "Waiting for Brain Data.";
 String filename = "mindPainter####.jpg"; //####=frameCount when the screenshots were taken
 
-boolean screenShotHasRun = false;
+boolean screenShotHasRun;
+boolean showReadings;
 
 void setup(){
   //fullScreen(); //slows down the program 
@@ -34,14 +35,17 @@ void setup(){
   textFont(font);
   size(1060,730); //comment this out if you want to run at fullscreen
   background(0);
-  printArray(Serial.list());
+  printArray(Serial.list()); ////prints out all serial ports at startup
   frameRate(2000); 
-  myPort = new Serial(this, Serial.list()[0],57600); //[0]=COM6
+  myPort = new Serial(this, Serial.list()[0],57600);  //[0]=COM6 for me
+  screenShotHasRun = false;
+  showReadings = false;
 }
  
 void draw(){
-   screenShot();
-   consoleMessages();    
+   showConsole();
+   screenShot();  
+   consoleMessages();
 
    if(myPort.read() == 170){
     if(myPort.read() == 170){
@@ -90,13 +94,13 @@ void draw(){
       }//closes if bytepayload==32
     }//closes if myport reads 170 
   }
-
 }
 
 void drawShape(){ //draw a shape based on the rhodeona curve using the mind readings as variables
+
    if(millis()-timer>=2000){ //redraw the screen with what is read every 2 secs
         background(Med); //background should get brighter the higher the user's attention(using Attn)
-        translate(width/2,height/2);
+        translate(width/2,height/2); //centre the shape on the screen
         fill(HiAlpha,LoBeta,MidGamma); //(HiAlpha,LoBeta,MidGamma)
         beginShape();           
         for (float a = 0; a < TWO_PI*8; a += 0.01) { //shape should get more complex the higher the user's meditation
@@ -117,7 +121,7 @@ void drawShape(){ //draw a shape based on the rhodeona curve using the mind read
         endShape();
         timer = millis();
   }//closes the timer if-statement 
-} //closes the function
+} //closes the drawShape function
 
 void consoleMessages(){
      if ((Delta<=1)||(Theta<=1)||(LoAlpha<=1)||(HiAlpha<=1)||(LoBeta<=1)||(HiBeta<=1)||(LoGamma<=1)||(MidGamma<=1)||(Attn<=1)||(Med<=1)){
@@ -133,6 +137,23 @@ void consoleMessages(){
           textAlign(LEFT);
           text(noSignal, 0,50); //if no sensors are returning data, write some text
         }
+    if(showReadings==true){
+          fill(151);
+          textAlign(LEFT);
+          text("Delta:"+Delta, 0, 490);
+          text("Theta:"+Theta,0,510);
+          text("LoAlpha:"+LoAlpha,0,530);
+          text("HiAlpha:"+HiAlpha,0,550);
+          text("LoBeta:"+LoBeta,0,570);
+          text("HiBeta:"+HiBeta,0,590);
+          text("LoGamma:"+LoGamma,0,610);
+          text("MidGamma:"+MidGamma,0,630);
+          text("Attention:"+Attn,0,650);
+          text("Meditation:"+Med,0,670);
+          text("Press 'c' at any time to save your painting", 0, 690);
+          text("Press any key to close", 0, 710);
+//        println("CONSOLE OPEN");
+      }
 }// closes the function
 
 void screenShot(){ //save the current frame to the sketch folder
@@ -142,6 +163,16 @@ void screenShot(){ //save the current frame to the sketch folder
       screenShotHasRun=true; //prevent a held key from taking lots of screenshots
       println("Screenshot saved!");
    }
+}
+}
+void showConsole() {
+  if (keyPressed){    
+    if(key=='n'){
+      showReadings = true;
+ //     println("Console ON");
+    } else {
+      showReadings = false;
+    }
   }
 }
 void keyReleased(){

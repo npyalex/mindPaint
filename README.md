@@ -25,6 +25,11 @@ The code is currently arranged in such a way that higher concentration should re
 
 Take a screenshot by pressing 'C'. Screenshots are stored in the sketch folder.
 
+### Contents
+This project's paintings can be generated in two ways: 
+1) using the MindWave brain sensor and the Processing sketch.
+2) using Arduino sensors and the p5.js sketch.
+If a brain sensor headset is not available, this project can approximate the same paintings using sensor data gathered by Arduino.
 
 ### Troubleshooting
 The headset updates once every 1-1.5 seconds. The painting updates once every 2 seconds. Occasionally there may be a hitch when the headset hasn't updated and the painting is looking for new variables.
