@@ -24,11 +24,14 @@ PFont font;
  
 String reportString;
 String waitingForData = "Low Reception. Please Be Patient.";
-String noSignal = "Waiting for Brain Data. Please don't press any keys until the painter begins.";
+String noSignal = "Press 'n' to see your brain numbers and other options.";
 String filename = "mindPainter####.jpg";                //####=frameCount when the screenshots were taken
+String title = "MindPainter";
+String pressStart = "Please wait while your brain gathers its art supplies...";
 
 boolean screenShotHasRun;
 boolean showReadings;
+boolean mediMode;
 
 void setup(){
   //fullScreen();                                       //slows down the program 
@@ -41,16 +44,15 @@ void setup(){
   myPort = new Serial(this, Serial.list()[0],57600);    //[0]=COM6 for me
   screenShotHasRun = false;
   showReadings = false;
+  mediMode = false;
   file = new SoundFile(this,"cameraClick.mp3");
-  showConsole();
-  screenShot();  
-  consoleMessages();
 }
  
 void draw(){
    showConsole();
    screenShot();  
    consoleMessages();
+   switchModes();
 
    if(myPort.read() == 170){
     if(myPort.read() == 170){
@@ -93,8 +95,12 @@ void draw(){
                
           }//closes the if data received statement
         }//closes while myport.available
-    //*******Draw functions must be in here to properly align with brain readings!**********   
-    drawShape();
+    //*******Draw functions must be in here to properly align with brain readings!********** 
+    if (mediMode == true){
+      meditationMode();
+    } else {
+      drawShape();
+    }
     //************************************************************************************
       }//closes if bytepayload==32
     }//closes if myport reads 170 
@@ -102,21 +108,20 @@ void draw(){
 }
 
 void drawShape(){                                       //draw a shape based on the rhodeona curve using the mind readings as variables
-
    if(millis()-timer>=2000){                             //redraw the screen with what is read every 2 secs
-        background(Theta);                               //background should get brighter based on the user's visual stimululi
+        background(Med);                               //background should get brighter based on the user's meditation 
         translate(width/2,height/2);                     //centre the shape on the screen
         fill(HiAlpha,LoBeta,MidGamma);                    //(HiAlpha,LoBeta,MidGamma)
         beginShape();           
         for (float a = 0; a < TWO_PI*16; a += 0.01) { //shape should get more complex the higher the user's meditation
                                                            //the multiplier of TWO_PI(8 as of writing) should be a single integer, not a variable
                                                            //the number that the cosine is multiplied by (200 as of writing) should be a single integer, not a variable
-          float r = (200) * cos(Delta*a);                   //base for generating vertex points - using Med*a
-          float x = r * (cos(a))*(Med*HiAlpha);            //vertex points - using Theta/2 
-          float y = r * (sin(a))*(LoAlpha*HiBeta);         //vertex points - using LoAlpha/2
+          float r = (200) * cos(Delta*a);                   //base for generating vertex points
+          float x = r * (cos(a))*(Theta*HiAlpha);            //vertex points
+          float y = r * (sin(a))*(LoAlpha*HiBeta);         //vertex points
         
         if ((LoAlpha>=0)&&(LoGamma>=0)&&(MidGamma>=0)){
-          stroke(LoAlpha,LoGamma,HiBeta);                  //(LoAlpha,LoGamma,HiBeta)
+          stroke(LoAlpha,LoGamma,HiBeta);                  //(R,G,B)
             }else{
           stroke(255);
             }
@@ -139,6 +144,11 @@ void consoleMessages(){
           fill(151);
           textAlign(LEFT);
           text(noSignal, 0,50);                             //if no sensors are returning data, write some text
+          textAlign(CENTER,CENTER);
+          textSize(32);
+          text(title,530,365);
+          textSize(16);
+          text(pressStart,530,390);
         }
     if(showReadings==true){
           fill(151);
@@ -154,7 +164,8 @@ void consoleMessages(){
           text("Attention:"+Attn,0,650);
           text("Meditation:"+Med,0,670);
           text("Press 'c' at any time to save your painting", 0, 690);
-          text("Press any key to close", 0, 710);
+          text("Press 'm' to enter meditation mode and press 'q' to return to paint mode", 0, 710);
+          text("Press any key to close", 0, 730);
 //        println("CONSOLE OPEN");
       }
 }// closes the function
@@ -179,9 +190,43 @@ void showConsole() {
     }
   }
 }
+void switchModes(){
+  if (keyPressed){
+    if(key == 'm'){
+      mediMode = true;
+//      println("Meditation Mode Activated");
+    } else if ((key == 'q')){
+      mediMode = false;
+//      println("Meditation Mode Deactivated");
+      } 
+    }
+  }
 void keyReleased(){
-    if ((key=='c')&&(screenShotHasRun==true)){
+   if ((key=='c')&&(screenShotHasRun==true)){
       screenShotHasRun=false;                             //allow screenShot to run again once the key is released
 //      println("C Released");
-    }
+   }
 }
+void meditationMode(){                                       
+   if(millis()-timer>=2000){                             
+        background(Med);                               
+        translate(width/2,height/2);                     
+        fill(HiAlpha,LoBeta,MidGamma);                    
+        beginShape();           
+        for (float a = 0; a < TWO_PI*8; a += 0.01) { 
+          float r = (200) * cos(Attn*a);                   
+          float x = r * (cos(a))*(Med);             
+          float y = r * (sin(a))*(Med);         
+        
+        if ((LoAlpha>=0)&&(LoGamma>=0)&&(MidGamma>=0)){
+          stroke(LoAlpha,LoGamma,HiBeta);                  
+            }else{
+          stroke(255);
+            }
+        strokeWeight(1);
+        vertex(x,y);
+        }
+        endShape();
+        timer = millis();
+  }//closes the timer if-statement 
+} //closes the meditationMode function

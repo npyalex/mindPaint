@@ -23,7 +23,11 @@ The following parameters are captured by the headset, although they are not brai
 
 The code is currently arranged in such a way that higher concentration should result in high-contrast images, while a state of meditation should result in more complex geometry being generated.
 
-Take a screenshot by pressing 'C'. Screenshots are stored in the sketch folder.
+View your brainwave numbers by pressing 'n'.
+
+Take a screenshot by pressing 'c'. Screenshots are stored in the sketch folder.
+
+Enter Meditation Mode by pressing 'm'. In this mode MindPaint will generate a starburst shape. The deeper in meditation the user is, the larger the starburst. Press 'q' while in Meditaion Mode to return to the painter.
 
 ### Contents
 This project's paintings can be generated in two ways: 
