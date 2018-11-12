@@ -50,9 +50,9 @@ from Frontier Nerds and the Mental Block project
 
 This project would not exist if not for some excellent advice from Nick Puckett.
 
-While I didn't use his code, some insights from the work of [Eric Blue](eric-blue.com) pointed me in the right direction.
+While I didn't use his code, some insights from the work of [Eric Blue](http://eric-blue.com) pointed me in the right direction.
 
-Code from user precociousmouse from the [Processing forums](forum.processing.org) provided the breakthrough I needed. Thank you, whoever you are.
+Code from user precociousmouse from the [Processing forums](http://forum.processing.org) provided the breakthrough I needed. Thank you, whoever you are.
 
 ### LICENSE
 Copyright Nick Alexander 2018
