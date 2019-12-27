@@ -31,8 +31,8 @@ Enter Meditation Mode by pressing 'm'. In this mode MindPaint will generate a st
 
 ### Contents
 This project's paintings can be generated in two ways: 
-1) using the MindWave brain sensor and the Processing sketch.
-2) using Arduino sensors and the p5.js sketch.
+1) using the MindWave brain sensor and the Processing sketch [mindPaintProcessing.pde](https://github.com/npyalex/mindPaint/tree/master/mindPaintProcessing).
+2) using Arduino sensors and the p5.js [sketch](https://github.com/npyalex/mindPaint/blob/master/sketch.js).
 If a brain sensor headset is not available, this project can approximate the same paintings using sensor data gathered by Arduino.
 
 ### Troubleshooting
