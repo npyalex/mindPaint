@@ -29,6 +29,8 @@ Take a screenshot by pressing 'c'. Screenshots are stored in the sketch folder.
 
 Enter Meditation Mode by pressing 'm'. In this mode MindPaint will generate a starburst shape. The deeper in meditation the user is, the larger the starburst. Press 'q' while in Meditaion Mode to return to the painter.
 
+The first iteration of this project relied on using the MindWave with Arduino. Though Processing is better suited to getting readings from the MindWave, the deprecated Arduino code has been included for documentation purposes.
+
 ### Contents
 This project's paintings can be generated in two ways: 
 1) using the MindWave brain sensor and the Processing sketch [mindPaintProcessing.pde](https://github.com/npyalex/mindPaint/tree/master/mindPaintProcessing).
